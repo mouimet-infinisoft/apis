@@ -2,12 +2,34 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 require('dotenv').config(); // Load environment variables from .env file
 const cors = require('cors')
+var plantuml = require('node-plantuml');
 
 const app = express();
 const port = process.env.PORT || 3010;
 
 app.use(express.json());
 app.use(cors())
+
+const textMessageTemplate = (msg) => `
+${msg}
+
+on Behalf of Martin Ouimet
+Message sent from
+
+iBrain AI Companion
+Automation & AI Specialist
+Email: ibrain@infinisoft.world
+Website: www.infinisoft.world
+Follow us on: Twitter - https://twitter.com/InfinisoftI | Facebook - https://www.facebook.com/ibrain2u
+
+`
+const htmlMessageTemplate = (msg) => `
+${msg}
+
+on Behalf of Martin Ouimet
+Message sent from
+<table style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">  <tr>  <td style="padding-right: 20px;">  <img src="https://www.infinisoft.world/img/ibrain-flash.webm" alt="iBrain Video" style="height: 80px; border-radius: 40px;"/>  </td>  <td>  <strong>iBrain AI Companion</strong><br> Automation & AI Specialist<br>  <a href="mailto:ibrain@infinisoft.world" style="color: #007BFF; text-decoration: none;">ibrain@infinisoft.world</a><br>  <a href="https://www.infinisoft.world" style="color: #007BFF; text-decoration: none;">www.infinisoft.world</a><br>  <span style="color: #888;">Follow us on: <a href="https://twitter.com/InfinisoftI" style="color: #1DA1F2;">Twitter</a> | <a href="https://www.facebook.com/ibrain2u" style="color: #3b5998;">Facebook</a>  </span>  </td>  </tr>  </table>
+`
 
 app.post('/sendemail', async (req, res) => {
   const { content, title, destination } = req.body;
@@ -27,9 +49,11 @@ app.post('/sendemail', async (req, res) => {
     // Configure the email options
     let mailOptions = {
       from: process.env.EMAIL_FROM,
+      cc: process.env.EMAIL_FROM,
       to: destination,
       subject: title,
-      text: content
+      text: textMessageTemplate(content),
+      html: htmlMessageTemplate(content)
     };
 
     // Send the email
@@ -41,6 +65,27 @@ app.post('/sendemail', async (req, res) => {
     console.error('Error sending email:', error);
     res.status(500).json({ error: 'Failed to send email' });
   }
+});
+
+
+app.get('/png/:uml', function (req, res) {
+  res.set('Content-Type', 'image/png');
+
+  var decode = plantuml.decode(req.params.uml);
+  var gen = plantuml.generate({ format: 'png' });
+
+  decode.out.pipe(gen.in);
+  gen.out.pipe(res);
+});
+
+app.get('/svg/:uml', function (req, res) {
+  res.set('Content-Type', 'image/svg+xml');
+
+  var decode = plantuml.decode(req.params.uml);
+  var gen = plantuml.generate({ format: 'svg' });
+
+  decode.out.pipe(gen.in);
+  gen.out.pipe(res);
 });
 
 app.listen(port, () => {
