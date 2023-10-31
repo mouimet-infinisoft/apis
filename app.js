@@ -33,11 +33,11 @@ Phone: 514-437-1775
 `;
 
 const htmlMessageTemplate = (msg, _video) => `
-${msg}
-
-Best Regards,
-Martin Ouimet
-
+${msg}<br/>
+<br/>
+Best Regards,<br/>
+Martin Ouimet<br/>
+<br/>
 Message sent from
 <table style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
   <tr>
