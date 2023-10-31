@@ -42,9 +42,7 @@ Message sent from
 <table style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
   <tr>
     <td style="padding-right: 20px;">
-      <video style="height: 80px; border-radius: 40px;" autoplay loop muted playsinline>
-        <source src="data:video/webm;base64,${_video}" type="video/webm">
-      </video>
+    <img src="https://ibrain.codes/images/logos.png" alt="IBrain Developer" style="height: 75px">
     </td>
     <td>
       <strong>iBrain AI Companion</strong><br>
