@@ -3,7 +3,6 @@ const nodemailer = require('nodemailer');
 require('dotenv').config(); // Load environment variables from .env file
 const cors = require('cors')
 var plantuml = require('node-plantuml');
-const { video } = require('./video');
 
 const app = express();
 const port = process.env.PORT || 3010;
