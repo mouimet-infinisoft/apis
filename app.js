@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config(); // Load environment variables from .env file
 const cors = require('cors')
 var plantuml = require('node-plantuml');
+const { video } = require('./video');
 
 const app = express();
 const port = process.env.PORT || 3010;
@@ -13,22 +14,57 @@ app.use(cors())
 const textMessageTemplate = (msg) => `
 ${msg}
 
-on Behalf of Martin Ouimet
-Message sent from
+Martin Ouimet
 
+Message sent from
 iBrain AI Companion
 Automation & AI Specialist
 Email: ibrain@infinisoft.world
 Website: www.infinisoft.world
-Follow us on: Twitter - https://twitter.com/InfinisoftI | Facebook - https://www.facebook.com/ibrain2u
+Follow us on: 
+  Twitter: https://twitter.com/InfinisoftI
+  Facebook: https://www.facebook.com/ibrain2u
 
-`
-const htmlMessageTemplate = (msg) => `
+---
+
+Martin Ouimet
+Email: mouimet@infinisoft.world
+Phone: 514-437-1775
+`;
+
+const htmlMessageTemplate = (msg, _video) => `
 ${msg}
 
-on Behalf of Martin Ouimet
+Best Regards,
+Martin Ouimet
+
 Message sent from
-<table style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">  <tr>  <td style="padding-right: 20px;">  <img src="https://www.infinisoft.world/img/ibrain-flash.webm" alt="iBrain Video" style="height: 80px; border-radius: 40px;"/>  </td>  <td>  <strong>iBrain AI Companion</strong><br> Automation & AI Specialist<br>  <a href="mailto:ibrain@infinisoft.world" style="color: #007BFF; text-decoration: none;">ibrain@infinisoft.world</a><br>  <a href="https://www.infinisoft.world" style="color: #007BFF; text-decoration: none;">www.infinisoft.world</a><br>  <span style="color: #888;">Follow us on: <a href="https://twitter.com/InfinisoftI" style="color: #1DA1F2;">Twitter</a> | <a href="https://www.facebook.com/ibrain2u" style="color: #3b5998;">Facebook</a>  </span>  </td>  </tr>  </table>
+<table style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+  <tr>
+    <td style="padding-right: 20px;">
+      <video style="height: 80px; border-radius: 40px;" autoplay loop muted playsinline>
+        <source src="data:video/webm;base64,${_video}" type="video/webm">
+      </video>
+    </td>
+    <td>
+      <strong>iBrain AI Companion</strong><br>
+      Automation & AI Specialist<br>
+      <a href="mailto:ibrain@infinisoft.world" style="color: #007BFF; text-decoration: none;">ibrain@infinisoft.world</a><br>
+      <a href="https://www.infinisoft.world" style="color: #007BFF; text-decoration: none;">www.infinisoft.world</a><br>
+      <span style="color: #888;">Follow us on: 
+        <a href="https://twitter.com/InfinisoftI" style="color: #1DA1F2;">Twitter</a> | 
+        <a href="https://www.facebook.com/ibrain2u" style="color: #3b5998;">Facebook</a>
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding-top: 10px; border-top: 1px solid #ddd;">
+      <strong>Martin Ouimet</strong><br>
+      <a href="mailto:mouimet@infinisoft.world" style="color: #007BFF; text-decoration: none;">mouimet@infinisoft.world</a><br>
+      <a href="tel:5144371775" style="color: #007BFF; text-decoration: none;">514-437-1775</a>
+    </td>
+  </tr>
+</table>
 `
 
 app.post('/sendemail', async (req, res) => {
@@ -53,7 +89,7 @@ app.post('/sendemail', async (req, res) => {
       to: destination,
       subject: title,
       text: textMessageTemplate(content),
-      html: htmlMessageTemplate(content)
+      html: htmlMessageTemplate(content, video)
     };
 
     // Send the email
