@@ -31,7 +31,7 @@ Email: mouimet@infinisoft.world
 Phone: 514-437-1775
 `;
 
-const htmlMessageTemplate = (msg, _video) => `
+const htmlMessageTemplate = (msg) => `
 ${msg}<br/>
 <br/>
 Best Regards,<br/>
@@ -86,7 +86,7 @@ app.post('/sendemail', async (req, res) => {
       to: destination,
       subject: title,
       text: textMessageTemplate(content),
-      html: htmlMessageTemplate(content, video)
+      html: htmlMessageTemplate(content)
     };
 
     // Send the email
