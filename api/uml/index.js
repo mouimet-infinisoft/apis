@@ -1,28 +1,33 @@
-var express = require('express');
-var plantuml = require('node-plantuml');
- 
-var app = express();
- 
-plantuml.useNailgun(); // Activate the usage of Nailgun
- 
-app.get('/png/:uml', function(req, res) {
-  res.set('Content-Type', 'image/png');
- 
-  var decode = plantuml.decode(req.params.uml);
-  var gen = plantuml.generate({format: 'png'});
- 
-  decode.out.pipe(gen.in);
-  gen.out.pipe(res);
+const express = require('express');
+const fs = require('fs');
+const { exec } = require('child_process');
+
+const router = express.Router();
+
+router.post('/generate', (req, res) => {
+  // Save the UML from req.body.uml to t.wsd
+  fs.writeFile('t.wsd', req.body.uml, (err) => {
+    if (err) {
+      return res.status(500).send('Error writing to file');
+    }
+
+    // Run PlantUML to generate output.png
+    const name = `temp_${Date.now()}_${Math.floor(Math.random() * 10000)}.png`;
+
+    exec(
+      `puml generate t.wsd -o api/images/png/${name}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return res.status(500).send('Error generating PNG');
+        }
+
+        res.json({
+          imageUrl: `http://localhost:3010/images/png/${name}`,
+        });
+      }
+    );
+  });
 });
- 
-app.get('/svg/:uml', function(req, res) {
-  res.set('Content-Type', 'image/svg+xml');
- 
-  var decode = plantuml.decode(req.params.uml);
-  var gen = plantuml.generate({format: 'svg'});
- 
-  decode.out.pipe(gen.in);
-  gen.out.pipe(res);
-});
- 
-app.listen(8085);
+
+module.exports = router;
